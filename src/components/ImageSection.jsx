@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { ROUTES } from '../routes';
+import { Link } from 'react-router-dom';
 
 const ImageSection = () => {
   const [products, setProducts] = useState([]); 
@@ -52,9 +54,11 @@ const ImageSection = () => {
               </p>
               
               {/* Button Section */}
+              <Link to={ROUTES.SINGLE_PRODUCT.DYNAMIC(product._id)}>
               <button className="mt-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                 View Details
               </button>
+              </Link>
             </div>
           ))
         ) : (

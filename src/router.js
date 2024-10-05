@@ -6,6 +6,7 @@ import { ROUTES } from './routes';
 import Login from './pages/LoginPage';
 import Register from './pages/RegisterPage';
 import ImageSection from './components/ImageSection';
+import CourseDetailsPage from './pages/CourseDetailsPage';
 
 const router = createBrowserRouter([
   {
@@ -16,8 +17,7 @@ const router = createBrowserRouter([
       { path: ROUTES.LOGIN, element: <Login /> },
       { path: ROUTES.REGISTER, element: <Register /> },
       { path: ROUTES.PRODUCT, element: <ImageSection /> },
-    //   { path: ROUTES.BLOG, element: <BLOG /> },
-    //   { path: ROUTES.SINGLE_BOOK.STATIC, element: <BookDetailsPage /> },
+      { path: ROUTES.SINGLE_PRODUCT.STATIC, element: <CourseDetailsPage /> },
     ],
   },
   { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },

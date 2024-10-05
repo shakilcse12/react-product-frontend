@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext'; // Assuming you have this set up for context management
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -15,6 +16,7 @@ const LoginPage = () => {
 
     try {
       await login(null, email, password);
+      toast.success("Login Successful");
       navigate('/products'); // Redirect to Products page after successful login
     } catch (error) {
       setError(error.message);

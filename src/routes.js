@@ -7,7 +7,7 @@ export const ROUTES = {
     REGISTER: '/register',
     SINGLE_PRODUCT: {
       STATIC: '/product/:id', 
-      DYNAMIC: (productId) => `/book/${productId}`,
+      DYNAMIC: (productId) => `/product/${productId}`,
     },
     NOT_FOUND: '*',
   };

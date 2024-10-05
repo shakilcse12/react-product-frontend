@@ -15,15 +15,18 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
   const login = async (provider, email, password) => {
+    setLoading(true);
     try {
       if (email && password) {
         // Sign in with email and password
@@ -53,14 +56,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    setLoading(true);
     try {
       await signOut(auth);
+      //toast.success("Successfully logged out");
     } catch (error) {
       console.error('Logout failed', error);
     }
   };
 
   const signup = (email, password) => {
+    setLoading(true);
     createUserWithEmailAndPassword(auth, email, password);
   }
 
