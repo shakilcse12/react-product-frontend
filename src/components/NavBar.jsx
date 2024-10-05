@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Routes } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Adjust this path
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 import logo from '../assets/logos-food3.jpeg';
@@ -113,14 +113,24 @@ const NavBar = () => {
               </>
             ) : (
               <>
+              {/* User Profile Image and Name */}
+              <div className="flex items-center space-x-3">
+                {user.photoURL && (
+                  <img
+                    src={user.photoURL}
+                    alt={user.displayName}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                )}
                 <span className="text-gray-700 font-medium">{user.displayName}</span>
-                <button
-                  onClick={logout}
-                  className="text-white bg-red-500 px-4 py-2 rounded-md hover:bg-red-600"
-                >
-                  Logout
-                </button>
-              </>
+              </div>
+              <button
+                onClick={logout}
+                className="text-white bg-red-500 px-4 py-2 rounded-md hover:bg-red-600"
+              >
+                Logout
+              </button>
+            </>
             )}
           </div>
         </div>

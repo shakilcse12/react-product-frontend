@@ -7,7 +7,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { loginWithGoogle, loginWithGithub, login, user } = useAuth(); // useAuth hook for context
+  const { login } = useAuth(); // useAuth hook for context
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -25,7 +25,7 @@ const LoginPage = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      await loginWithGoogle();
+      await login("google", null, null);
       navigate('/products');
     } catch (error) {
       setError(error.message);
@@ -34,7 +34,7 @@ const LoginPage = () => {
 
   const handleGithubLogin = async () => {
     try {
-      await loginWithGithub();
+      await login("github", null, null);
       navigate('/products');
     } catch (error) {
       setError(error.message);
