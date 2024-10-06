@@ -44,6 +44,16 @@ const LoginPage = () => {
     }
   };
 
+  const handleFacebookLogin = async () => {
+    try {
+      await login("facebook", null, null);
+      toast.success("Login Successful");
+      navigate(ROUTES.PRODUCT);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
@@ -99,6 +109,12 @@ const LoginPage = () => {
               className="bg-gray-800 hover:bg-gray-900 text-white py-2 px-4 rounded-md font-semibold"
             >
               GitHub
+            </button>
+            <button
+              onClick={handleFacebookLogin}
+              className="bg-blue-700 hover:bg-blue-800 text-white py-2 px-4 rounded-md font-semibold"
+            >
+              Facebook
             </button>
           </div>
         </div>
