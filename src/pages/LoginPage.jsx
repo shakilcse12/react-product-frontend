@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext'; // Assuming you have this set up for context management
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { ROUTES } from '../routes';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ const LoginPage = () => {
     try {
       await login(null, email, password);
       toast.success("Login Successful");
-      navigate('/products'); // Redirect to Products page after successful login
+      navigate(ROUTES.PRODUCT); // Redirect to Products page after successful login
     } catch (error) {
       setError(error.message);
     }
@@ -26,7 +27,8 @@ const LoginPage = () => {
   const handleGoogleLogin = async () => {
     try {
       await login("google", null, null);
-      navigate('/products');
+      toast.success("Login Successful");
+      navigate(ROUTES.PRODUCT);
     } catch (error) {
       setError(error.message);
     }
@@ -35,7 +37,8 @@ const LoginPage = () => {
   const handleGithubLogin = async () => {
     try {
       await login("github", null, null);
-      navigate('/products');
+      toast.success("Login Successful");
+      navigate(ROUTES.PRODUCT);
     } catch (error) {
       setError(error.message);
     }
