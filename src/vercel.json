@@ -1,0 +1,27 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "./index.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/"
+      }
+    ],
+    "env": {
+      "REACT_APP_API_URL": "https://api.example.com",
+      "REACT_APP_GOOGLE_CLIENT_ID": "your-google-client-id",
+      "REACT_APP_FACEBOOK_CLIENT_ID": "your-facebook-client-id"
+    },
+    "rewrites": [
+      {
+        "source": "/api/(.*)",
+        "destination": "https://your-backend-api.com/api/$1"
+      }
+    ]
+  }
+  
