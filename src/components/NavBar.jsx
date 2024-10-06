@@ -50,6 +50,14 @@ const NavBar = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
+                {/* User Profile Image and Name */}
+                {user.photoURL && (
+                  <img
+                    src={user.photoURL}
+                    alt={user.displayName}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                )}
                 <span className="text-gray-700 font-medium">{user.displayName}</span>
                 <button
                   onClick={logout}
