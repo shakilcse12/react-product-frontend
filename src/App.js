@@ -1,6 +1,6 @@
 // src/App.js
-import { BrowserRouter as Router, Route, Routes, RouterProvider } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext'; // Adjust the path as needed
+import {  RouterProvider } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext'; 
 import router from './router';
 import { Toaster } from 'react-hot-toast';
 
