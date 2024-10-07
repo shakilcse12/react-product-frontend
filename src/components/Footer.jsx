@@ -7,8 +7,11 @@ const Footer = () => {
       <div className="container mx-auto flex flex-col lg:flex-row justify-between items-center px-6">
         
         <div className="flex flex-col text-center lg:text-left mb-6 lg:mb-0">
-          <h2 className="text-lg font-bold mb-2">All kinds of books are available here</h2>
-          <p className="text-md text-gray-300">Best books at affordable prices</p>
+          <h2 className="text-lg font-bold mb-2">All kinds of courses are available here</h2>
+          <p className="text-md text-gray-300">Best courses at affordable prices</p>
+          <p className="text-sm text-gray-400">123 Rakin St, Rakin City, RK 12345</p>
+          <p className="text-sm text-gray-400">Contact: (123) 456-7890</p>
+          <p className="text-sm text-gray-400">Email: info@learnwithtahmid.com</p>
         </div>
 
         <ul className="flex lg:pr-44 space-x-6 mb-6 lg:mb-0">
@@ -47,7 +50,7 @@ const Footer = () => {
 
       <div className="mt-6 border-t border-gray-600 pt-4 text-center">
         <p className="text-sm font-bold text-gray-400">
-          &copy; {new Date().getFullYear()} Rokomari. All rights reserved.
+          &copy; {new Date().getFullYear()} LearnWithTahmid. All rights reserved.
         </p>
       </div>
     </footer>

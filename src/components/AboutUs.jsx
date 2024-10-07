@@ -1,17 +1,34 @@
-
-
 const AboutUs = () => {
   return (
-    <div className="py-12 px-4 sm:px-8 flex flex-col">
-      <h2 className="text-2xl sm:text-3xl font-bold">About Us</h2>
-      <div className="mt-8 max-w-lg flex flex-col sm:flex-row space-y-8 sm:space-y-0 sm:space-x-8">
-        <img src="https://via.placeholder.com/150" alt="Owner" className="rounded-full w-32 sm:w-40 md:w-48" />
-        <div className="text-left sm:text-left">
-          <h3 className="text-xl sm:text-2xl font-bold">Sabbir Hassan</h3>
-          <p className="mt-4 text-base sm:text-lg">I am the owner of this website, with a passion for delivering quality products to our customers.</p>
+    <section className="py-16 px-4 sm:px-8 bg-white-100">
+      <div className="max-w-4xl mx-auto">
+        {/* Section Title */}
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-center text-gray-800">About Us</h2>
+        <p className="mt-4 text-center text-lg text-gray-600">
+          We are dedicated to delivering high-quality products and excellent customer service.
+        </p>
+
+        {/* Owner Info */}
+        <div className="mt-12 flex flex-col sm:flex-row items-center sm:space-x-12">
+          <img
+            src="https://via.placeholder.com/200"
+            alt="Owner"
+            className="rounded-full w-48 h-48 object-cover shadow-md border-4 border-gray-200"
+          />
+          <div className="mt-8 sm:mt-0 text-center sm:text-left">
+            <h3 className="text-2xl font-bold text-gray-800">Sabbir Hassan</h3>
+            <p className="mt-4 text-lg text-gray-600 leading-relaxed">
+              As the owner of this website, I’m passionate about providing the best products and services to our valued
+              customers. Your satisfaction is my priority.
+            </p>
+            <p className="mt-4 text-lg text-gray-600 leading-relaxed">
+              Our journey started with a simple idea: to offer high-quality products with unmatched customer service. We
+              are committed to continuing this legacy.
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
