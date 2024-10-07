@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Adjust this path
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
-import logo from '../assets/logos-food3.jpeg';
+import logo from '../assets/logo.png';
 import { ROUTES } from '../routes';
 
 const NavBar = () => {
@@ -30,7 +30,12 @@ const NavBar = () => {
           {/* Desktop Menu */}
           <div className="hidden lg:flex space-x-6 items-center">
             <NavLink to="/" className="text-gray-700 hover:text-blue-500">Home</NavLink>
-            <NavLink to="/products" className="text-gray-700 hover:text-blue-500">Products</NavLink>
+            <NavLink 
+        to={user ? "/products" : "/login"} 
+        className="text-gray-700 hover:text-blue-500"
+      >
+        Products
+      </NavLink>
             
             {/* Conditionally render Login/Register or User Info */}
             {!user ? (
