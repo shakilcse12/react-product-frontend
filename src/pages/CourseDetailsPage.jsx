@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
+import { PRODUCT_API } from '../API/Product';
 
 const CourseDetailsPage = () => {
   const { id } = useParams();
@@ -8,7 +9,7 @@ const CourseDetailsPage = () => {
 
   useEffect(() => {
     const fetchCourse = async () => {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`);
+      const response = await fetch(PRODUCT_API.SINGLE_PRODUCTS.DYNAMIC(id));
       const fetchedCourse = await response.json();
       setCourse(fetchedCourse);
     };

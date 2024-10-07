@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { ROUTES } from '../routes';
 import { Link } from 'react-router-dom';
+import {PRODUCT_API} from '../API/Product'
 
 const ImageSection = () => {
   const [products, setProducts] = useState([]); 
 
-  // Fetch products from an API
+  
   useEffect(() => {
     const fetchProducts = async () => {
+      if (products.length > 0) return;  
       try {
-        const response = await fetch('http://localhost:5000/api/products'); 
+        const response = await fetch(PRODUCT_API.PRODUCTS);
         const data = await response.json();
         setProducts(data); 
       } catch (error) {
         console.error('Error fetching products:', error);
       }
     };
-
+  
     fetchProducts();
-  }, []); 
-
-
-  // Function to truncate long descriptions
+    console.log("compoenis is rerenderedd");
+  }, [products]); 
+  
   const truncateText = (text, maxLength) => {
     if (text.length > maxLength) {
       return text.substring(0, maxLength) + '...';
