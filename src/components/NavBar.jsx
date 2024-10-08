@@ -31,10 +31,17 @@ const NavBar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex space-x-6 items-center">
-            <NavLink to="/" className="text-gray-700 hover:text-blue-500">Home</NavLink>
+            <NavLink to={ROUTES.HOME} 
+            className={({ isActive }) => 
+              isActive ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
+            }>
+              Home
+              </NavLink>
             <NavLink 
-        to={user ? "/products" : "/login"} 
-        className="text-gray-700 hover:text-blue-500"
+        to={user ? ROUTES.PRODUCT : ROUTES.LOGIN} 
+        className={({ isActive }) => 
+          isActive ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
+        }
       >
         Products
       </NavLink>
@@ -95,14 +102,18 @@ const NavBar = () => {
           <div className="flex flex-col items-center space-y-4 py-4">
             <NavLink
               to={ROUTES.HOME}
-              className="text-gray-700 hover:text-blue-500"
+              className={({ isActive }) => 
+                isActive ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
+              }
               onClick={toggleMenu}
             >
               Home
             </NavLink>
             <NavLink
               to={ROUTES.PRODUCT}
-              className="text-gray-700 hover:text-blue-500"
+              className={({ isActive }) => 
+                isActive ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
+              }
               onClick={toggleMenu}
             >
               Products
