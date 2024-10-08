@@ -21,8 +21,10 @@ const NavBar = () => {
           
           {/* Logo and Site Name */}
           <div className="flex items-center">
-            <img src={logo} alt="Logo" className="w-10 h-10" />
-            <NavLink to="/" className="ml-2 text-2xl font-bold">
+            <NavLink to={ROUTES.HOME}> 
+              <img src={logo} alt="Logo" className="w-10 h-10" />
+            </NavLink>
+            <NavLink to={ROUTES.HOME} className="ml-2 text-2xl font-bold">
               LearnWith<span className="text-blue-500">Tahmid</span>
             </NavLink>
           </div>
