@@ -1,6 +1,6 @@
 import bannerImage from '../assets/banner5.jpg';
 
-const Banner = () => {
+const Banner = ({ onExploreClick, onLearnMoreClick }) => {
   return (
     <section className="relative w-full h-96 bg-cover bg-center bg-blue-300 flex items-center justify-center text-center"
       style={{ backgroundImage: `url(${bannerImage})` }}>
@@ -18,14 +18,16 @@ const Banner = () => {
         
         {/* Call to Action Buttons */}
         <div className="mt-8 space-x-4">
-          <a href="#explore"
+          <button 
+            onClick={onExploreClick} 
             className="px-8 py-3 bg-orange-500 text-white rounded-lg text-lg font-semibold hover:bg-orange-600 transition">
             Explore Now
-          </a>
-          <a href="#learn-more"
+          </button>
+          <button 
+            onClick={onLearnMoreClick}
             className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition">
             Learn More
-          </a>
+          </button>
         </div>
       </div>
     </section>
