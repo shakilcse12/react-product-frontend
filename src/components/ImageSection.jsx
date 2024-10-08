@@ -6,7 +6,6 @@ import {PRODUCT_API} from '../API/Product'
 const ImageSection = () => {
   const [products, setProducts] = useState([]); 
 
-  
   useEffect(() => {
     const fetchProducts = async () => {
       if (products.length > 0) return;  
@@ -20,7 +19,6 @@ const ImageSection = () => {
     };
   
     fetchProducts();
-    console.log("compoenis is rerenderedd");
   }, [products]); 
   
   const truncateText = (text, maxLength) => {
@@ -36,7 +34,10 @@ const ImageSection = () => {
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {products.length > 0 ? (
           products.map((product) => (
-            <div key={product._id} className="bg-white shadow-lg rounded-lg p-4 flex flex-col items-center">
+            <div 
+              key={product._id} 
+              className="bg-white shadow-lg rounded-lg p-4 flex flex-col items-center justify-between h-full"
+            >
               {/* Image Section */}
               <div className="w-40 h-40 bg-gray-200 flex items-center justify-center rounded-lg overflow-hidden">
                 <img
@@ -53,12 +54,12 @@ const ImageSection = () => {
               <p className="mt-2 text-gray-600 text-center h-16">
                 {truncateText(product.details || 'No description available', 60)}
               </p>
-              
+
               {/* Button Section */}
-              <Link to={ROUTES.SINGLE_PRODUCT.DYNAMIC(product._id)}>
-              <button className="mt-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                View Details
-              </button>
+              <Link to={ROUTES.SINGLE_PRODUCT.DYNAMIC(product._id)} className="mt-auto">
+                <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                  View Details
+                </button>
               </Link>
             </div>
           ))
