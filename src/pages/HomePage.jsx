@@ -1,9 +1,12 @@
 import AboutUs from "../components/AboutUs";
 import Banner from "../components/Banner";
+import Categories from "../components/Categories";
 import ContactUs from "../components/ContactUs";
 import HowItWorks from "../components/HowItWorks";
+import ProductHighlights from "../components/ProductHighligts";
 import ProductSection from "../components/ProductSection";
 import { useRef } from 'react';
+import ReviewsFaqSection from "../components/ReviewsFaqSection";
 
 const HomePage = () => {
     const productsRef = useRef(null); // Create a ref for the Products section
@@ -28,12 +31,18 @@ const HomePage = () => {
                 <HowItWorks />
             </section>
 
+            <Categories />
+
+            <ProductHighlights />
+
             <section ref={productsRef}>
                 <ProductSection />
             </section>
 
-            <ContactUs />
-            <AboutUs />
+            {/* <ContactUs />
+            <AboutUs /> */}
+
+            <ReviewsFaqSection />
 
         </div>
     );
