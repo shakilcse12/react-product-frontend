@@ -40,7 +40,7 @@ const NavBar = () => {
             <NavLink 
         to={user ? ROUTES.PRODUCT : ROUTES.LOGIN} 
         className={({ isActive }) => 
-          isActive ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
+          isActive && user ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
         }
       >
         Products
@@ -112,7 +112,7 @@ const NavBar = () => {
             <NavLink
               to={ROUTES.PRODUCT}
               className={({ isActive }) => 
-                isActive ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
+                isActive && user ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
               }
               onClick={toggleMenu}
             >
