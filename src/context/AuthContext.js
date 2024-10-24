@@ -65,10 +65,37 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = (email, password) => {
+  const signup = async (email, password, name, phone, address) => {
     setLoading(true);
-    createUserWithEmailAndPassword(auth, email, password);
-  }
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      console.log('User signed up with Email and Password');
+
+      // Send user details to backend
+      const response = await fetch('https://my-course-backend-green.vercel.app/user/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          name,
+          phone,
+          address,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        console.error('Failed to register user in backend:', data.error);
+      }
+    } catch (error) {
+      console.error('Signup failed', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const authInfo = {
     signup,

@@ -11,18 +11,49 @@ const LoginPage = () => {
   const { login } = useAuth(); // useAuth hook for context
   const navigate = useNavigate();
 
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setError('');
+
+  //   try {
+  //     await login(null, email, password);
+  //     toast.success("Login Successful");
+  //     navigate(ROUTES.PRODUCT); // Redirect to Products page after successful login
+  //   } catch (error) {
+  //     setError(error.message);
+  //   }
+  // };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-
+  
     try {
-      await login(null, email, password);
+      await login(null, email, password); // Firebase login
       toast.success("Login Successful");
-      navigate(ROUTES.PRODUCT); // Redirect to Products page after successful login
+  
+      // Fetch user details from backend using the logged-in email
+      const response = await fetch('https://my-course-backend-green.vercel.app/user/details', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }), // Send user email to backend
+      });
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log("User details fetched from backend:", data);
+        navigate(data.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD); // Redirect based on role
+      } else {
+        console.error(data.error);
+        setError(data.error);
+      }
     } catch (error) {
       setError(error.message);
     }
   };
+  
 
   const handleGoogleLogin = async () => {
     try {

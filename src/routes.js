@@ -3,6 +3,8 @@ export const ROUTES = {
     FAQ: '/faq',
     ABOUT: '/about',
     PRODUCT: '/products',
+    ADMIN_DASHBOARD: '/products',
+    USER_DASHBOARD: '/products',
     LOGIN: '/login',
     REGISTER: '/register',
     SINGLE_PRODUCT: {

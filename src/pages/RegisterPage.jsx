@@ -6,6 +6,9 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState(''); // New field for name
+  const [phone, setPhone] = useState(''); // New field for phone
+  const [address, setAddress] = useState(''); // New field for address
   const [error, setError] = useState('');
   const { signup, loginWithGoogle, loginWithGithub } = useAuth(); // useAuth hook for context
   const navigate = useNavigate();
@@ -19,8 +22,8 @@ const RegisterPage = () => {
     }
 
     try {
-      await signup(email, password);
-      navigate('/products'); // Redirect to Products page after successful registration
+      await signup(email, password, name, phone, address); // Pass the additional fields to signup
+      navigate('/login'); // Redirect to Products page after successful registration
     } catch (error) {
       setError(error.message);
     }
@@ -29,7 +32,7 @@ const RegisterPage = () => {
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
-      navigate('/products');
+      navigate('/login');
     } catch (error) {
       setError(error.message);
     }
@@ -38,7 +41,7 @@ const RegisterPage = () => {
   const handleGithubLogin = async () => {
     try {
       await loginWithGithub();
-      navigate('/products');
+      navigate('/login');
     } catch (error) {
       setError(error.message);
     }
@@ -51,6 +54,45 @@ const RegisterPage = () => {
         {error && <p className="text-red-500 mb-4">{error}</p>}
         
         <form onSubmit={handleRegister} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              className="mt-1 w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium">
+              Phone
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              className="mt-1 w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="address" className="block text-sm font-medium">
+              Address
+            </label>
+            <input
+              type="text"
+              id="address"
+              className="mt-1 w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+            />
+          </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium">
               Email
