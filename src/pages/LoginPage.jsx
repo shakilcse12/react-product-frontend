@@ -30,7 +30,6 @@ const LoginPage = () => {
   
     try {
       await login(null, email, password); // Firebase login
-      toast.success("Login Successful");
   
       // Fetch user details from backend using the logged-in email
       const response = await fetch('https://my-course-backend-green.vercel.app/user/details', {
@@ -43,13 +42,16 @@ const LoginPage = () => {
       const data = await response.json();
   
       if (response.ok) {
+        toast.success("Login Successful");
         console.log("User details fetched from backend:", data);
         navigate(data.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD); // Redirect based on role
       } else {
+        toast.error(data.error);
         console.error(data.error);
         setError(data.error);
       }
     } catch (error) {
+      console.log("error from login page is = ", error);
       setError(error.message);
     }
   };

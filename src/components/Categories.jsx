@@ -25,7 +25,7 @@ const Categories = () => {
     //   setCategories(response.data);
     // };
     // fetchCategories();
-  }, dummyCategories);
+  }, []);
 
   const scrollRef = useRef(null);
 
