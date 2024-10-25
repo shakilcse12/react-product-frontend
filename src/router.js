@@ -8,6 +8,7 @@ import Register from './pages/RegisterPage';
 import ImageSection from './components/ImageSection';
 import CourseDetailsPage from './pages/CourseDetailsPage';
 import PrivateRoute from './Routes/PrivateRoute';
+import AdminDashboard from './components/AdminDashboard';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       { path: ROUTES.REGISTER, element: <Register /> },
       { path: ROUTES.PRODUCT, element: <PrivateRoute><ImageSection /></PrivateRoute> },
       { path: ROUTES.SINGLE_PRODUCT.STATIC, element: <CourseDetailsPage /> },
+      { path: ROUTES.ADMIN_DASHBOARD, element: <AdminDashboard /> },
     ],
   },
   { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },

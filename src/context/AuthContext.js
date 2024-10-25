@@ -2,7 +2,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { auth, googleProvider, githubProvider, facebookProvider } from '../firebase'; // Make sure to import the providers
 import { onAuthStateChanged, signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 
@@ -37,13 +36,7 @@ export const AuthProvider = ({ children }) => {
           const data = await response.json();
           console.log(data);
           if (response.ok) {
-            const updatedUser = {
-              ...currentUser, // Firebase user info
-              role: data.role, // Add role from backend
-            };
-            setUser(updatedUser);
-
-            console.log("now user with role =", user);
+            setRole(data.role);
           } else {
             console.error(data.error);
           }
