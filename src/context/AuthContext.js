@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }) => {
           });
   
           const data = await response.json();
+          console.log(data);
           if (response.ok) {
             const updatedUser = {
               ...currentUser, // Firebase user info
@@ -88,6 +89,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const setRole = (roles) => {
+    if(user && roles) {
+      const updatedUser = {
+        ...user, // Firebase user info
+        role: user.role ?? roles, // Add role from backend
+      };
+      setUser(updatedUser);
+      console.log("user role = ", user.role);
+    }
+  }
+
   const logout = async () => {
     setLoading(true);
     try {
@@ -133,6 +145,7 @@ export const AuthProvider = ({ children }) => {
   const authInfo = {
     signup,
     user,
+    setRole,
     login,
     logout,
     loading,

@@ -8,7 +8,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAuth(); // useAuth hook for context
+  const { login, setRole } = useAuth(); // useAuth hook for context
   const navigate = useNavigate();
 
   // const handleLogin = async (e) => {
@@ -44,6 +44,7 @@ const LoginPage = () => {
       if (response.ok) {
         toast.success("Login Successful");
         console.log("User details fetched from backend:", data);
+        setRole(data.role);
         navigate(data.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD); // Redirect based on role
       } else {
         toast.error(data.error);
