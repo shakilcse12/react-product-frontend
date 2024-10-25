@@ -49,6 +49,25 @@ export const addCategory = async (category) => {
     return response.data;
   };
 
+  // Add a new product
+export const addProduct = async (productData) => {
+    const response = await axios.post(`${API_URL}/products`, productData);
+    return response.data;
+};
+
+// Edit a product
+export const editProduct = async (productId, updatedData) => {
+    const response = await axios.put(`${API_URL}/products/${productId}`, updatedData);
+    console.log(response.data);
+    return response.data;
+};
+
+// Delete a product
+export const deleteProduct = async (productId) => {
+    const response = await axios.delete(`${API_URL}/products/${productId}`);
+    return response.data;
+};
+
 
   
   
