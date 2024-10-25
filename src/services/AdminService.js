@@ -1,20 +1,6 @@
-// services/adminService.js
-// export const fetchUsers = async () => {
-//     const res = await fetch('https://my-course-backend-green.vercel.app/users');
-//     return res.json();
-//   };
-  
-//   export const fetchCategories = async () => {
-//     const res = await fetch('https://my-course-backend-green.vercel.app/admin/categories');
-//     return res.json();
-//   };
-  
-//   export const fetchProducts = async () => {
-//     const res = await fetch('https://my-course-backend-green.vercel.app/admin/products');
-//     return res.json();
-//   };
 
-// services/AdminService.js
+import axios from 'axios';
+
 const API_URL = 'https://my-course-backend-green.vercel.app/admin'; // Replace with your actual API URL
 
 export const fetchUsers = async () => {
@@ -51,6 +37,17 @@ export const toggleUserRole = async (userId) => {
   }
   return await response.json(); // Return updated user data if needed
 };
+
+export const addCategory = async (category) => {
+    const response = await axios.post(`${API_URL}/categories`, category);
+    console.log(response.data);
+    return response.data;
+  };
+  
+  export const editUserDetails = async (userId, updatedDetails) => {
+    const response = await axios.patch(`${API_URL}/user/${userId}`, updatedDetails);
+    return response.data;
+  };
 
 
   

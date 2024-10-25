@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUsers, fetchCategories, fetchProducts, toggleUserRole } from '../services/AdminService';
+import { fetchUsers, fetchCategories, fetchProducts, toggleUserRole, addCategory, editUserDetails } from '../services/AdminService';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
-  
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCategory, setNewCategory] = useState({ name: '', image: '' });
+  const [editUser, setEditUser] = useState(null);
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -19,7 +22,6 @@ const AdminDashboard = () => {
         console.error(error.message);
       }
     };
-
     loadData();
   }, []);
 
@@ -34,94 +36,189 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleAddCategory = async () => {
+    try {
+      const response = await addCategory(newCategory);
+      
+      if (response.insertedId) {
+        const newCatWithId = { ...newCategory, _id: response.insertedId }; // Add the new ID
+        setCategories(prevCategories => [...prevCategories, newCatWithId]); // Update the categories list
+        setShowCategoryModal(false); // Close the modal
+        setNewCategory({ name: '', image: '' });
+      }
+    } catch (error) {
+      console.error("Failed to add category:", error.message);
+    }
+  };
+  
+
+  const handleEditUser = async (userId, updatedDetails) => {
+    try {
+      const updatedUser = await editUserDetails(userId, updatedDetails);
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user._id === userId ? updatedUser : user))
+      );
+      setEditUser(null);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto p-8">
-        <h1 className="text-3xl font-semibold mb-6">Admin Dashboard</h1>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <div className="container mx-auto px-8 lg:px-16 xl:px-32 py-8 sm:p-8">
+        <h1 className="text-4xl font-semibold text-center text-gray-800 mb-8">Admin Dashboard</h1>
 
         {/* Users Table */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">All Users</h2>
-          <table className="min-w-full bg-white border rounded-md">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border">Name</th>
-                <th className="py-2 px-4 border">Role</th>
-                <th className="py-2 px-4 border">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(user => (
-                <tr key={user._id}>
-                  <td className="py-2 px-4 border">{user.name}</td>
-                  <td className="py-2 px-4 border">{user.role}</td>
-                  <td className="py-2 px-4 border">
-                    <button className="bg-blue-500 text-white px-2 py-1 rounded" onClick={() => handleToggleRole(user._id)}>
-                      Toggle Role
-                    </button>
-                  </td>
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">All Users</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-200 text-gray-700">
+                  <th className="py-3 px-5">Name</th>
+                  <th className="py-3 px-5">Email</th>
+                  <th className="py-3 px-5">Role</th>
+                  <th className="py-3 px-5">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="text-gray-600">
+                {users.map(user => (
+                  <tr key={user._id} className="hover:bg-gray-100">
+                    <td className="py-3 px-5 border-t">{user.name}</td>
+                    <td className="py-3 px-5 border-t">{user.email}</td>
+                    <td className="py-3 px-5 border-t">{user.role}</td>
+                    <td className="py-3 px-5 border-t flex gap-2">
+                      <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded shadow-sm transition"
+                        onClick={() => handleToggleRole(user._id)}
+                      >
+                        Toggle Role
+                      </button>
+                      <button
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded shadow-sm transition"
+                        onClick={() => setEditUser(user)}
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Categories Table */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">All Categories</h2>
-          <table className="min-w-full bg-white border rounded-md">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border">Image</th>
-                <th className="py-2 px-4 border">Category Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map(category => (
-                <tr key={category._id}>
-                  <td className="py-2 px-4 border">
-                    <img src={category.image} alt={category.name} className="w-16 h-16 object-cover rounded" />
-                  </td>
-                  <td className="py-2 px-4 border">{category.name}</td>
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700">All Categories</h2>
+            <button
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm transition"
+              onClick={() => setShowCategoryModal(true)}
+            >
+              Add New Category
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-200 text-gray-700">
+                  <th className="py-3 px-5">Image</th>
+                  <th className="py-3 px-5">Category Name</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="text-gray-600">
+                {categories.map(category => (
+                  <tr key={category._id} className="hover:bg-gray-100">
+                    <td className="py-3 px-5 border-t">
+                      <img src={category.image} alt={category.name} className="w-16 h-16 rounded object-cover" />
+                    </td>
+                    <td className="py-3 px-5 border-t">{category.name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Products Table */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">All Products</h2>
-          <table className="min-w-full bg-white border rounded-md">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border">Image</th>
-                <th className="py-2 px-4 border">Product Name</th>
-                <th className="py-2 px-4 border">Rating</th>
-                <th className="py-2 px-4 border">Price</th>
-                <th className="py-2 px-4 border">Category</th>
-                <th className="py-2 px-4 border">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map(product => (
-                <tr key={product._id}>
-                  <td className="py-2 px-4 border">
-                    <img src={product.image} alt={product.name} className="w-16 h-16 object-cover rounded" />
-                  </td>
-                  <td className="py-2 px-4 border">{product.name}</td>
-                  <td className="py-2 px-4 border">{product.rating}</td>
-                  <td className="py-2 px-4 border">${product.price}</td>
-                  <td className="py-2 px-4 border">{product.category?.name}</td>
-                  <td className="py-2 px-4 border">
-                    <button className="bg-green-500 text-white px-2 py-1 rounded">Edit</button>
-                    <button className="bg-red-500 text-white px-2 py-1 rounded ml-2">Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+<div className="bg-white rounded-lg shadow-md p-6 mb-8">
+  <h2 className="text-2xl font-semibold text-gray-700 mb-4">All Products</h2>
+  <div className="overflow-x-auto">
+    <table className="w-full text-left border-collapse">
+      <thead>
+        <tr className="bg-gray-200 text-gray-700">
+          <th className="py-3 px-5">Image</th>
+          <th className="py-3 px-5">Product Name</th>
+          <th className="py-3 px-5">Rating</th>
+          <th className="py-3 px-5">Price</th>
+          <th className="py-3 px-5">Category</th>
+          <th className="py-3 px-5">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="text-gray-600">
+        {products.map(product => (
+          <tr key={product._id} className="hover:bg-gray-100">
+            <td className="py-3 px-5 border-t">
+              <img src={product.image} alt={product.name} className="w-16 h-16 rounded object-cover" />
+            </td>
+            <td className="py-3 px-5 border-t">{product.name}</td>
+            <td className="py-3 px-5 border-t">{product.rating}</td>
+            <td className="py-3 px-5 border-t">${product.price}</td>
+            <td className="py-3 px-5 border-t">{product.category?.name}</td>
+            <td className="py-3 px-5 border-t flex items-center gap-2">
+              <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded shadow-sm transition">
+                Edit
+              </button>
+              <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded shadow-sm transition">
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+        {/* Category Modal */}
+        {showCategoryModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white w-96 p-6 rounded-lg shadow-lg transform transition-transform scale-95">
+              <h2 className="text-lg font-semibold mb-4">Add New Category</h2>
+              <input
+                type="text"
+                placeholder="Category Name"
+                className="border p-2 mb-4 w-full focus:ring-2 focus:ring-blue-500 rounded"
+                value={newCategory.name}
+                onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Image URL"
+                className="border p-2 mb-4 w-full focus:ring-2 focus:ring-blue-500 rounded"
+                value={newCategory.image}
+                onChange={(e) => setNewCategory({ ...newCategory, image: e.target.value })}
+              />
+              <div className="flex justify-end gap-4">
+                <button
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition"
+                  onClick={handleAddCategory}
+                >
+                  Add Category
+                </button>
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition"
+                  onClick={() => setShowCategoryModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
