@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import LogoutButton from './LogoutButton';
 
 // Modal Component
 const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
@@ -137,11 +138,6 @@ const UserDashboardPage = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/'); // Redirect to home page
-  };
-
   if (!user) {
     return <div>Loading...</div>; // Or redirect to login page
   }
@@ -158,12 +154,7 @@ const UserDashboardPage = () => {
         >
           Edit Profile
         </button>
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white py-2 px-4 rounded-lg"
-        >
-          Logout
-        </button>
+        <LogoutButton />
       </div>
 
       {/* Total Amount Spent */}

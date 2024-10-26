@@ -1,9 +1,18 @@
-// src/context/AuthContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
-import { auth, googleProvider, githubProvider, facebookProvider } from '../firebase'; // Make sure to import the providers
-import { onAuthStateChanged, signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, googleProvider, githubProvider, facebookProvider } from '../firebase'; // Ensure these are correctly imported
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from 'firebase/auth';
+import toast from 'react-hot-toast'; // Ensure toast is imported if you're using it
+import { ROUTES } from '../routes';
+import { MdOutlineNotificationsActive } from 'react-icons/md';
 
 const AuthContext = createContext();
+const BACKEND_URL = 'https://my-course-backend-green.vercel.app'; // Backend URL
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -19,35 +28,35 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
+      setLoading(true); // Set loading to true while checking auth status
       if (currentUser) {
         console.log("User is signed in:", currentUser);
-  
-        // Fetch role from backend after user is set
         try {
-          const response = await fetch('https://my-course-backend-green.vercel.app/user/details', {
+          const response = await fetch(`${BACKEND_URL}/user/details`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email: currentUser.email }), // Send logged-in user's email
+            body: JSON.stringify({ email: currentUser.email }),
           });
-  
+
           const data = await response.json();
-          console.log(data);
           if (response.ok) {
             updateUserDetails(data);
           } else {
             console.error(data.error);
+            toast.error('Failed to fetch user details');
           }
         } catch (error) {
           console.error('Error fetching role from backend:', error);
+          toast.error('Error fetching user details');
         }
       } else {
         console.log("No user detected");
       }
-      setLoading(false);
+      setLoading(false); // Reset loading state
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -55,11 +64,9 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       if (email && password) {
-        // Sign in with email and password
         await signInWithEmailAndPassword(auth, email, password);
         console.log('Logged in with Email and Password');
       } else {
-        // Sign in with provider
         let selectedProvider;
         if (provider === 'google') {
           selectedProvider = googleProvider;
@@ -68,7 +75,7 @@ export const AuthProvider = ({ children }) => {
         } else if (provider === 'facebook') {
           selectedProvider = facebookProvider;
         }
-  
+
         if (selectedProvider) {
           await signInWithPopup(auth, selectedProvider);
           console.log(`Logged in with ${provider} provider`);
@@ -77,33 +84,32 @@ export const AuthProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      //toast.error(error);
       console.error('Login failed', error);
+      toast.error('Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Update user context with backend details
   const updateUserDetails = (details) => {
     setUser(prev => ({
       ...prev,
       userId: details._id,
       userName: details.name,
       role: details.role,
-      profilePicture : details.profilePicture ? details.profilePicture : '',
+      profilePicture: details.profilePicture || '',
     }));
 
-    console.log("now user from authContext = ", user);
+    console.log("User details updated in context:", details);
   };
 
   const setRole = (roles) => {
-    console.log("now setting the role is func is called with role = ", roles);
-    if(user && roles) {
-      const updatedUser = {
-        ...user, // Firebase user info
-        role: user.role ?? roles, // Add role from backend
-      };
-      setUser(updatedUser);
-      console.log("user role = ", user.role);
+    if (user && roles) {
+      setUser(prev => ({
+        ...prev,
+        role: prev.role ?? roles,
+      }));
+      console.log("User role updated:", roles);
     }
   }
 
@@ -111,9 +117,14 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       await signOut(auth);
-      //toast.success("Successfully logged out");
+      console.log('User logged out');
+      setUser(null);
+      toast.success("Successfully logged out");
     } catch (error) {
       console.error('Logout failed', error);
+      toast.error('Logout failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -123,31 +134,26 @@ export const AuthProvider = ({ children }) => {
       await createUserWithEmailAndPassword(auth, email, password);
       console.log('User signed up with Email and Password');
 
-      // Send user details to backend
-      const response = await fetch('https://my-course-backend-green.vercel.app/user/register', {
+      const response = await fetch(`${BACKEND_URL}/user/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email,
-          name,
-          phone,
-          address,
-        }),
+        body: JSON.stringify({ email, name, phone, address }),
       });
 
       if (!response.ok) {
         const data = await response.json();
         console.error('Failed to register user in backend:', data.error);
+        toast.error('Registration failed');
       }
     } catch (error) {
       console.error('Signup failed', error);
+      toast.error('Signup failed');
     } finally {
-      //setLoading(false);
+      setLoading(false);
     }
   };
-
 
   const authInfo = {
     signup,
