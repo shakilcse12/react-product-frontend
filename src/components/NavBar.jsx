@@ -8,6 +8,7 @@ import { ROUTES } from '../routes';
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth(); // Using user to check login status
+  console.log(user);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };

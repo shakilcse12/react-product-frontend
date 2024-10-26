@@ -1,3 +1,4 @@
+import { PRODUCT_API } from '../API/Product';
 const API_URL = 'https://my-course-backend-green.vercel.app'; 
 
 export const fetchCategories = async () => {
@@ -15,4 +16,10 @@ export const fetchProducts = async () => {
     throw new Error('Failed to fetch products');
   }
   return await response.json();
+};
+
+export const fetchCourseDetails = async (id) => {
+  const response = await fetch(PRODUCT_API.SINGLE_PRODUCTS.DYNAMIC(id));
+  const fetchedCourse = await response.json();
+  return fetchedCourse;
 };

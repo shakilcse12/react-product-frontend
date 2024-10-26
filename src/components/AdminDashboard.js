@@ -26,24 +26,45 @@ const AdminDashboard = () => {
                 setCategories(categoriesData);
                 const productsData = await fetchProducts();
                 setProducts(productsData);
-                const updatedProducts = productsData.map(product => {
-                    // Find the corresponding category object for the product's category ID
-                    const categoryObject = categoriesData.find(category => category._id === product.category);
+                // const updatedProducts = productsData.map(product => {
+                //     // Find the corresponding category object for the product's category ID
+                //     const categoryObject = categoriesData.find(category => category._id === product.category);
                 
-                    // If a match is found, replace the category ID with the category object
-                    return {
-                        ...product,
-                        category: categoryObject || product.category // Ensure category remains if no match
-                    };
-                });
+                //     // If a match is found, replace the category ID with the category object
+                //     return {
+                //         ...product,
+                //         category: categoryObject || product.category // Ensure category remains if no match
+                //     };
+                // });
                 
-                setProducts(updatedProducts);
+                // setProducts(updatedProducts);
+                fetchProductsWithCategories();
             } catch (error) {
                 console.error(error.message);
             }
         };
         loadData();
     }, []);
+
+    const fetchProductsWithCategories = async () => {
+        const products = await fetchProducts();
+        const categories = await fetchCategories();
+    
+        // Map category IDs to names
+        const categoryMap = categories.reduce((map, category) => {
+            map[category._id] = category.name;
+            return map;
+        }, {});
+    
+        // Replace category ID with the category name in the products array
+        const updatedProducts = products.map(product => ({
+            ...product,
+            category: categoryMap[product.category] || product.category // Use the name or fallback to ID if not found
+        }));
+    
+        setProducts(updatedProducts);
+    };
+    
 
     const handleToggleRole = async (userId) => {
         try {
@@ -73,7 +94,7 @@ const AdminDashboard = () => {
 
 
     // Functions to handle API calls for product actions
-    const handleAddProduct = async () => {
+    const handleAddProduct2 = async () => {
         try {
             const response = await addProduct(newProduct);
             if (response.insertedId) {
@@ -87,28 +108,50 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleAddProduct = async () => {
+        try {
+            const response = await addProduct(newProduct);
+    
+            if (response.insertedId) {
+                const category = categories.find(cat => cat._id === newProduct.category);
+                const newProductWithCategory = {
+                    ...newProduct,
+                    _id: response.insertedId,
+                    category: category ? category.name : newProduct.category, // Add category name or ID if not found
+                };
+    
+                setProducts(prevProducts => [...prevProducts, newProductWithCategory]); // Update the products list
+                setShowProductModal(false); // Close the modal
+                setNewProduct({ name: '', category: '', price: '', description: '', image: '' });
+            }
+        } catch (error) {
+            console.error("Failed to add product:", error.message);
+        }
+    };
+    
+
     const handleEditProduct2 = async (productId, updatedDetails) => {
         // Destructure and remove `_id` from the object to prevent update on the `_id` field
         const { _id, ...detailsToUpdate } = updatedDetails;
-      
-        try {
-          const updatedProduct = await editProduct(productId, detailsToUpdate);
-          setProducts(prevProducts =>
-            prevProducts.map(product => (product._id === productId ? updatedProduct : product))
-          );
-          setEditProductDetails(null);
-        } catch (error) {
-          console.error("Failed to edit product:", error.message);
-        }
-      };
 
-      const handleEditProduct = async (productId, updatedProduct) => {
+        try {
+            const updatedProduct = await editProduct(productId, detailsToUpdate);
+            setProducts(prevProducts =>
+                prevProducts.map(product => (product._id === productId ? updatedProduct : product))
+            );
+            setEditProductDetails(null);
+        } catch (error) {
+            console.error("Failed to edit product:", error.message);
+        }
+    };
+
+    const handleEditProduct = async (productId, updatedProduct) => {
         try {
             const { _id, ...productData } = updatedProduct;
-    
+
             // Make the API call to update the product on the server
-            const response = await editProduct(productId, productData); 
-    
+            const response = await editProduct(productId, productData);
+
             if (response && response.product) {
                 // Update the products array with the full product details
                 setProducts((prevProducts) =>
@@ -119,15 +162,15 @@ const AdminDashboard = () => {
             } else {
                 console.warn("Response did not include updated product details.");
             }
-    
+
             setEditProductDetails(null); // Close the edit modal
         } catch (error) {
             console.error("Failed to update product:", error.message);
         }
     };
-    
-    
-      
+
+
+
 
     const openEditProductModal = (product) => {
         setEditProductDetails(product);

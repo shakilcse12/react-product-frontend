@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }) => {
           const data = await response.json();
           console.log(data);
           if (response.ok) {
+            console.log("set role is called from useEffect = ", data.role);
             setRole(data.role);
           } else {
             console.error(data.error);
@@ -83,6 +84,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const setRole = (roles) => {
+    console.log("now setting the role is func is called with role = ", roles);
     if(user && roles) {
       const updatedUser = {
         ...user, // Firebase user info

@@ -8,8 +8,8 @@ export const ROUTES = {
     LOGIN: '/login',
     REGISTER: '/register',
     SINGLE_PRODUCT: {
-      STATIC: '/product/:id', 
-      DYNAMIC: (productId) => `/product/${productId}`,
+      STATIC: '/products/:id', 
+      DYNAMIC: (productId) => `/products/${productId}`,
     },
     NOT_FOUND: '*',
   };

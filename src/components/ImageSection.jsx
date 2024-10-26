@@ -41,14 +41,14 @@ const ImageSection = () => {
               {/* Image Section */}
               <div className="w-40 h-40 bg-gray-200 flex items-center justify-center rounded-lg overflow-hidden">
                 <img
-                  src={product.img_url || 'https://via.placeholder.com/150'}
-                  alt={product.title}
+                  src={product.image || 'https://via.placeholder.com/150'}
+                  alt={product.name}
                   className="w-full h-full object-cover"
                 />
               </div>
               
               {/* Title */}
-              <h3 className="mt-4 text-lg font-bold text-center">{product.title}</h3>
+              <h3 className="mt-4 text-lg font-bold text-center">{product.name}</h3>
 
               {/* Truncated Description with Fixed Height */}
               <p className="mt-2 text-gray-600 text-center h-16">
