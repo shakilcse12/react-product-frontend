@@ -6,4 +6,6 @@ export const PRODUCT_API = {
       DYNAMIC: (productId) => `https://my-course-backend-green.vercel.app/products/${productId}`,
     },
 
+    PURCHASE : 'https://my-course-backend-green.vercel.app/purchase',
+
   };

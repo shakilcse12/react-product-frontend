@@ -36,8 +36,7 @@ export const AuthProvider = ({ children }) => {
           const data = await response.json();
           console.log(data);
           if (response.ok) {
-            console.log("set role is called from useEffect = ", data.role);
-            setRole(data.role);
+            updateUserDetails(data);
           } else {
             console.error(data.error);
           }
@@ -81,6 +80,18 @@ export const AuthProvider = ({ children }) => {
       //toast.error(error);
       console.error('Login failed', error);
     }
+  };
+
+  // Update user context with backend details
+  const updateUserDetails = (details) => {
+    setUser(prev => ({
+      ...prev,
+      userId: details._id,
+      userName: details.name,
+      role: details.role,
+    }));
+
+    console.log("now user from authContext = ", user);
   };
 
   const setRole = (roles) => {
@@ -142,6 +153,7 @@ export const AuthProvider = ({ children }) => {
     user,
     setRole,
     login,
+    updateUserDetails,
     logout,
     loading,
   };

@@ -47,8 +47,10 @@ const LoginPage = () => {
         console.log("User details fetched from backend:", data);
         setRole(data.role);
         const lastVisitedPage = localStorage.getItem("lastLocation");
+        localStorage.removeItem('lastLocation');
         console.log("last loc = ", lastVisitedPage);
         navigate(lastVisitedPage || (data.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD)); // Redirect based on role
+      
       } else {
         toast.error(data.error);
         console.error(data.error);
