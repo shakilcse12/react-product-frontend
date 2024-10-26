@@ -38,7 +38,7 @@ const NavBar = () => {
               Home
             </NavLink>
             <NavLink 
-              to={user ? ROUTES.PRODUCT : ROUTES.LOGIN} 
+              to={ROUTES.PRODUCT} 
               className={({ isActive }) => 
                 isActive && user ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
               }>
@@ -107,7 +107,7 @@ const NavBar = () => {
               Home
             </NavLink>
             <NavLink
-              to={user ? ROUTES.PRODUCT : ROUTES.LOGIN} 
+              to={ROUTES.PRODUCT} 
               className={({ isActive }) => 
                 isActive && user ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
               }

@@ -8,13 +8,15 @@ const PrivateRoute = ({children}) => {
 
     const {user, loading} = useAuth();
 
-    const location = useLocation;
+    const location = useLocation();
 
     if(loading) return <Loader></Loader>;
 
     if(user) return children;
 
-    return <Navigate state={location.pathname} to={ROUTES.LOGIN}></Navigate>
+    localStorage.setItem('lastLocation', location.pathname);
+
+    return <Navigate state={{ from: location}} to={ROUTES.LOGIN}></Navigate>
 }
 
 export default PrivateRoute;

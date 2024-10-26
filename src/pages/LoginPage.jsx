@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext'; // Assuming you have this set up for context management
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ROUTES } from '../routes';
 
@@ -10,6 +10,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const { login, setRole } = useAuth(); // useAuth hook for context
   const navigate = useNavigate();
+  const location = useLocation();
 
   // const handleLogin = async (e) => {
   //   e.preventDefault();
@@ -45,7 +46,9 @@ const LoginPage = () => {
         toast.success("Login Successful");
         console.log("User details fetched from backend:", data);
         setRole(data.role);
-        navigate(data.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD); // Redirect based on role
+        const lastVisitedPage = localStorage.getItem("lastLocation");
+        console.log("last loc = ", lastVisitedPage);
+        navigate(lastVisitedPage || (data.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD)); // Redirect based on role
       } else {
         toast.error(data.error);
         console.error(data.error);

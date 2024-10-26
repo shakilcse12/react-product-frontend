@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ROUTES } from '../routes';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {PRODUCT_API} from '../API/Product'
+import { useAuth } from '../context/AuthContext';
+
 
 const ImageSection = () => {
   const [products, setProducts] = useState([]); 
+  const { user } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -17,8 +21,9 @@ const ImageSection = () => {
         console.error('Error fetching products:', error);
       }
     };
-  
+    if (!products || products.length === 0) {
     fetchProducts();
+    }
   }, [products]); 
   
   const truncateText = (text, maxLength) => {
@@ -56,7 +61,13 @@ const ImageSection = () => {
               </p>
 
               {/* Button Section */}
-              <Link to={ROUTES.SINGLE_PRODUCT.DYNAMIC(product._id)} className="mt-auto">
+              <Link to={user ? ROUTES.SINGLE_PRODUCT.DYNAMIC(product._id) : ROUTES.LOGIN} 
+              onClick={() => {
+                if (!user) {
+                  localStorage.setItem('lastLocation', location.pathname); // Store last location
+                }
+              }} // Save location if user is not logged in
+              className="mt-auto">
                 <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                   View Details
                 </button>
