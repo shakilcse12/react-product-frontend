@@ -21,6 +21,7 @@ export const fetchCategories = async () => {
 
 export const fetchProducts = async () => {
   const response = await fetch(`${API_URL}/products`);
+  console.log(response.data);
   if (!response.ok) {
     throw new Error('Failed to fetch products');
   }
@@ -51,6 +52,7 @@ export const addCategory = async (category) => {
 
   // Add a new product
 export const addProduct = async (productData) => {
+  console.log("product data = ", productData);
     const response = await axios.post(`${API_URL}/products`, productData);
     return response.data;
 };

@@ -1,9 +1,9 @@
 export const PRODUCT_API = {
-    PRODUCTS: 'https://react-product-backend.vercel.app/products',
+    PRODUCTS: 'https://my-course-backend-green.vercel.app/products',
 
     SINGLE_PRODUCTS: {
       STATIC: '/product/:id', 
-      DYNAMIC: (productId) => `https://react-product-backend.vercel.app/products/${productId}`,
+      DYNAMIC: (productId) => `https://my-course-backend-green.vercel.app//${productId}`,
     },
 
   };

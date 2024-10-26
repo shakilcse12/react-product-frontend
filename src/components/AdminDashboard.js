@@ -26,6 +26,18 @@ const AdminDashboard = () => {
                 setCategories(categoriesData);
                 const productsData = await fetchProducts();
                 setProducts(productsData);
+                const updatedProducts = productsData.map(product => {
+                    // Find the corresponding category object for the product's category ID
+                    const categoryObject = categoriesData.find(category => category._id === product.category);
+                
+                    // If a match is found, replace the category ID with the category object
+                    return {
+                        ...product,
+                        category: categoryObject || product.category // Ensure category remains if no match
+                    };
+                });
+                
+                setProducts(updatedProducts);
             } catch (error) {
                 console.error(error.message);
             }
@@ -371,7 +383,7 @@ const AdminDashboard = () => {
                                         <td className="py-3 px-5 border-t">{product.name}</td>
                                         <td className="py-3 px-5 border-t">{product.rating}</td>
                                         <td className="py-3 px-5 border-t">${product.price}</td>
-                                        <td className="py-3 px-5 border-t">{product.category?.name}</td>
+                                        <td className="py-3 px-5 border-t">{product.category?.name || product.category || 'N/A'}</td>
                                         <td className="py-3 px-5 border-t flex items-center gap-2">
                                             <button
                                                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded shadow-sm transition"
