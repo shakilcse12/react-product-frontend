@@ -9,6 +9,7 @@ import ImageSection from './components/ImageSection';
 import CourseDetailsPage from './pages/CourseDetailsPage';
 import PrivateRoute from './Routes/PrivateRoute';
 import AdminDashboard from './components/AdminDashboard';
+import UserDashboardPage from './components/UserDashboard';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       //{ path: ROUTES.SINGLE_PRODUCT.STATIC, element: <CourseDetailsPage /> },
       { path: ROUTES.SINGLE_PRODUCT.STATIC, element: <PrivateRoute><CourseDetailsPage /></PrivateRoute> },
       { path: ROUTES.ADMIN_DASHBOARD, element: <AdminDashboard /> },
+      { path: ROUTES.USER_DASHBOARD, element: <UserDashboardPage /> },
     ],
   },
   { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },

@@ -89,6 +89,7 @@ export const AuthProvider = ({ children }) => {
       userId: details._id,
       userName: details.name,
       role: details.role,
+      profilePicture : details.profilePicture ? details.profilePicture : '',
     }));
 
     console.log("now user from authContext = ", user);
