@@ -1,5 +1,5 @@
 const ProductHighlights = () => {
-    // Dummy data for featured products/best sellers/offers
+    // Dummy data
     const featuredProducts = [
       {
         id: 1,
@@ -28,8 +28,8 @@ const ProductHighlights = () => {
     ];
   
     return (
-      <div className="p-6 container mx-auto">
-        <h2 className="text-3xl font-bold mb-6 text-center">Featured Courses & Offers</h2>
+      <div className="p-6 container mx-auto py-12 px-4 sm:px-8 bg-gray-100">
+        <h2 className="text-3xl font-bold mb-6 text-center lg:mb-12">Featured Courses & Offers</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredProducts.map(product => (
             <div key={product.id} className="relative bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out">

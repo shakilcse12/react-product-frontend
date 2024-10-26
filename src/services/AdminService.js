@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 
-const API_URL = 'https://my-course-backend-green.vercel.app/admin'; // Replace with your actual API URL
+const API_URL = 'https://my-course-backend-green.vercel.app/admin'; 
 
 export const fetchUsers = async () => {
   const response = await fetch(`${API_URL}/users`);
