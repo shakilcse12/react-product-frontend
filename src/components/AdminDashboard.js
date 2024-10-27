@@ -3,6 +3,10 @@ import {
     fetchUsers, fetchCategories, fetchProducts, toggleUserRole, addCategory, editUserDetails,
     addProduct, editProduct, deleteProduct
 } from '../services/AdminService';
+import { useAuth } from '../context/AuthContext';
+
+import LogoutButton from './LogoutButton';
+import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
     const [users, setUsers] = useState([]);
@@ -16,6 +20,9 @@ const AdminDashboard = () => {
     const [newProduct, setNewProduct] = useState({ name: '', image: '', rating: '', price: '', category: '' });
     const [editProductDetails, setEditProductDetails] = useState(null);
     const [showProductModal, setShowProductModal] = useState(false);
+    const { user } = useAuth();
+    const admin = user;
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const loadData = async () => {
@@ -29,14 +36,14 @@ const AdminDashboard = () => {
                 // const updatedProducts = productsData.map(product => {
                 //     // Find the corresponding category object for the product's category ID
                 //     const categoryObject = categoriesData.find(category => category._id === product.category);
-                
+
                 //     // If a match is found, replace the category ID with the category object
                 //     return {
                 //         ...product,
                 //         category: categoryObject || product.category // Ensure category remains if no match
                 //     };
                 // });
-                
+
                 // setProducts(updatedProducts);
                 fetchProductsWithCategories();
             } catch (error) {
@@ -49,22 +56,22 @@ const AdminDashboard = () => {
     const fetchProductsWithCategories = async () => {
         const products = await fetchProducts();
         const categories = await fetchCategories();
-    
+
         // Map category IDs to names
         const categoryMap = categories.reduce((map, category) => {
             map[category._id] = category.name;
             return map;
         }, {});
-    
+
         // Replace category ID with the category name in the products array
         const updatedProducts = products.map(product => ({
             ...product,
             category: categoryMap[product.category] || product.category // Use the name or fallback to ID if not found
         }));
-    
+
         setProducts(updatedProducts);
     };
-    
+
 
     const handleToggleRole = async (userId) => {
         try {
@@ -111,7 +118,7 @@ const AdminDashboard = () => {
     const handleAddProduct = async () => {
         try {
             const response = await addProduct(newProduct);
-    
+
             if (response.insertedId) {
                 const category = categories.find(cat => cat._id === newProduct.category);
                 const newProductWithCategory = {
@@ -119,7 +126,7 @@ const AdminDashboard = () => {
                     _id: response.insertedId,
                     category: category ? category.name : newProduct.category, // Add category name or ID if not found
                 };
-    
+
                 setProducts(prevProducts => [...prevProducts, newProductWithCategory]); // Update the products list
                 setShowProductModal(false); // Close the modal
                 setNewProduct({ name: '', category: '', price: '', description: '', image: '' });
@@ -128,7 +135,7 @@ const AdminDashboard = () => {
             console.error("Failed to add product:", error.message);
         }
     };
-    
+
 
     const handleEditProduct2 = async (productId, updatedDetails) => {
         // Destructure and remove `_id` from the object to prevent update on the `_id` field
@@ -201,21 +208,42 @@ const AdminDashboard = () => {
         try {
             const updatedUserResponse = await editUserDetails(userId, updatedDetails);
 
-            // Find the original user and merge fields to ensure no undefined properties
+            // find the original user and merge fields to ensure no undefined properties
             const originalUser = users.find((user) => user._id === userId) || {};
             const updatedUser = { ...originalUser, ...updatedUserResponse.user };
 
             setUsers((prevUsers) =>
                 prevUsers.map((user) => (user._id === userId ? updatedUser : user))
             );
-
-            setEditUser(null); // Close the modal
+            toast.success("Profile Updated Successfully");
+            setEditUser(null); // close the modal
         } catch (error) {
             console.error(error.message);
         }
     };
 
+    const openEditModalAdmin = () => {
+        console.log("admin user exist with this info = ", admin);
+        if (admin) {
+            const adminId = admin.userId;
 
+            if (adminId) { } // check if adminID is real and found
+            else { toast.error("Sorry something went wrong!!!"); return; }
+
+            const adminUser = users.find((user) => user._id === adminId);
+
+            console.log("admin user exist with this info = ", adminUser);
+            setEditUser(adminUser);
+            setEditForm({
+                name: adminUser.name || '',
+                phoneNumber: adminUser.phoneNumber || '',
+                address: adminUser.address || '',
+                profilePicture: adminUser.profilePicture || '',
+                role: adminUser.role || '',
+                email: adminUser.email || ''
+            });
+        }
+    }
 
     const openEditModal = (user) => {
         setEditUser(user);
@@ -236,14 +264,25 @@ const AdminDashboard = () => {
     };
 
     const handleUpdate = () => {
+        setLoading(true);
         handleEditUser(editUser._id, editForm);
+        setLoading(false);
     };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
             <div className="container mx-auto px-8 lg:px-16 xl:px-32 py-8 sm:p-8">
                 <h1 className="text-4xl font-semibold text-center text-gray-800 mb-8">Admin Dashboard</h1>
-
+                {/* Buttons moved to the top right corner */}
+                <div className="flex space-x-2 mb-4 items-center justify-between">
+                    <button
+                        onClick={() => openEditModalAdmin()}
+                        className="bg-yellow-500 text-white py-2 px-4 rounded-lg"
+                    >
+                        Edit Profile
+                    </button>
+                    <LogoutButton />
+                </div>
                 {/* Users Table */}
                 <div className="bg-white rounded-lg shadow-md p-6 mb-8">
                     <h2 className="text-2xl font-semibold text-gray-700 mb-4">All Users</h2>
@@ -258,27 +297,29 @@ const AdminDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody className="text-gray-600">
-                                {users.map(user => (
-                                    <tr key={user._id} className="hover:bg-gray-100">
-                                        <td className="py-3 px-5 border-t">{user.name}</td>
-                                        <td className="py-3 px-5 border-t">{user.email}</td>
-                                        <td className="py-3 px-5 border-t">{user.role}</td>
-                                        <td className="py-3 px-5 border-t flex gap-2">
-                                            <button
-                                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded shadow-sm transition"
-                                                onClick={() => handleToggleRole(user._id)}
-                                            >
-                                                Toggle Role
-                                            </button>
-                                            <button
-                                                className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded shadow-sm transition"
-                                                onClick={() => openEditModal(user)}
-                                            >
-                                                Edit
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {users
+                                    .filter(user => user._id !== admin?.userId)
+                                    .map(user => (
+                                        <tr key={user._id} className="hover:bg-gray-100">
+                                            <td className="py-3 px-5 border-t">{user.name}</td>
+                                            <td className="py-3 px-5 border-t">{user.email}</td>
+                                            <td className="py-3 px-5 border-t">{user.role}</td>
+                                            <td className="py-3 px-5 border-t flex gap-2">
+                                                <button
+                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded shadow-sm transition"
+                                                    onClick={() => handleToggleRole(user._id)}
+                                                >
+                                                    Toggle Role
+                                                </button>
+                                                <button
+                                                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded shadow-sm transition"
+                                                    onClick={() => openEditModal(user)}
+                                                >
+                                                    Edit
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
                             </tbody>
                         </table>
                     </div>
@@ -287,10 +328,20 @@ const AdminDashboard = () => {
                 {/* Edit User Modal */}
                 {editUser && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white w-96 p-6 rounded-lg shadow-lg">
+
+                        <div className="bg-white w-96 rounded-lg shadow-lg">
+
+                            {/* Left-to-Right Loading Bar */}
+                            {loading && (
+                                <div className="w-full h-1 bg-gray-200 rounded-t">
+                                    <div className="h-full bg-blue-500 rounded-t animate-progress"></div>
+                                </div>
+                            )}
+                            <div className='p-6'>
                             <h2 className="text-lg font-semibold mb-4">Edit User</h2>
 
                             {/* Editable Fields */}
+                            
                             <input
                                 type="text"
                                 name="name"
@@ -341,17 +392,20 @@ const AdminDashboard = () => {
                                 value={editForm.email}
                                 disabled
                             />
+                            </div>
 
-                            <div className="flex justify-end gap-4">
+                            <div className="flex justify-end gap-4 px-6 pb-6">
                                 <button
                                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
                                     onClick={handleUpdate}
+                                    disabled={loading}
                                 >
-                                    Update
+                                    {loading ? 'Updating...' : 'Update'}
                                 </button>
                                 <button
                                     className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition"
                                     onClick={() => setEditUser(null)}
+                                    disabled={loading}
                                 >
                                     Cancel
                                 </button>

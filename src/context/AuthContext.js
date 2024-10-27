@@ -5,7 +5,7 @@ import {
   signInWithPopup,
   signOut,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
 import toast from 'react-hot-toast'; // Ensure toast is imported if you're using it
 import { ROUTES } from '../routes';
@@ -77,7 +77,10 @@ export const AuthProvider = ({ children }) => {
         }
 
         if (selectedProvider) {
-          await signInWithPopup(auth, selectedProvider);
+          const result = await signInWithPopup(auth, selectedProvider);
+          const user = result.user;
+          console.log("Google login user:", user); // Log the entire user object
+          setUser(user); // Ensure the user state is updated
           console.log(`Logged in with ${provider} provider`);
         } else {
           console.error('No provider or email/password provided');
@@ -98,6 +101,8 @@ export const AuthProvider = ({ children }) => {
       userName: details.name,
       role: details.role,
       profilePicture: details.profilePicture || '',
+      address: details.address || '',
+      userEmail: details.email || ''
     }));
 
     console.log("User details updated in context:", details);

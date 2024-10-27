@@ -1,5 +1,6 @@
+// src/pages/LoginPage.js
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext'; // Assuming you have this set up for context management
+import { useAuth } from '../context/AuthContext'; 
 import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ROUTES } from '../routes';
@@ -8,87 +9,65 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login, setRole } = useAuth(); // useAuth hook for context
+  const { login, setRole } = useAuth(); 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // const handleLogin = async (e) => {
-  //   e.preventDefault();
-  //   setError('');
-
-  //   try {
-  //     await login(null, email, password);
-  //     toast.success("Login Successful");
-  //     navigate(ROUTES.PRODUCT); // Redirect to Products page after successful login
-  //   } catch (error) {
-  //     setError(error.message);
-  //   }
-  // };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-  
+  const fetchUserDetailsAndNavigate = async (email) => {
     try {
-      await login(null, email, password); // Firebase login
-  
-      // Fetch user details from backend using the logged-in email
       const response = await fetch('https://my-course-backend-green.vercel.app/user/details', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }), // Send user email to backend
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }), 
       });
+
       const data = await response.json();
-  
+
       if (response.ok) {
         toast.success("Login Successful");
         console.log("User details fetched from backend:", data);
         setRole(data.role);
+
         const lastVisitedPage = localStorage.getItem('lastLocation');
         localStorage.removeItem('lastLocation');
-        console.log("last loc = ", lastVisitedPage);
-        navigate(lastVisitedPage || (data.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD)); // Redirect based on role
-      
+        navigate(lastVisitedPage || (data.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD));
       } else {
         toast.error(data.error);
-        console.error(data.error);
         setError(data.error);
       }
     } catch (error) {
-      console.log("error from login page is = ", error);
-      setError(error.message);
+      console.error("Error fetching user details:", error);
+      setError("Unable to fetch user details");
     }
   };
-  
 
-  const handleGoogleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+
     try {
-      await login("google", null, null);
-      toast.success("Login Successful");
-      navigate(ROUTES.PRODUCT);
+      await login(null, email, password);
+      await fetchUserDetailsAndNavigate(email);
     } catch (error) {
       setError(error.message);
     }
   };
 
-  const handleGithubLogin = async () => {
-    try {
-      await login("github", null, null);
-      toast.success("Login Successful");
-      navigate(ROUTES.PRODUCT);
-    } catch (error) {
-      setError(error.message);
-    }
-  };
+  const handleSocialLogin = async (provider) => {
+    setError('');
 
-  const handleFacebookLogin = async () => {
     try {
-      await login("facebook", null, null);
-      toast.success("Login Successful");
-      navigate(ROUTES.PRODUCT);
+      const user = await login(provider, null, null);
+      console.log("user = ", user);
+      const socialEmail = user?.email;
+
+      if (socialEmail) {
+        await fetchUserDetailsAndNavigate(socialEmail);
+      } else {
+        setError("No email found for social login.");
+      }
     } catch (error) {
+      console.error(`Social login with ${provider} failed`, error);
       setError(error.message);
     }
   };
@@ -138,19 +117,19 @@ const LoginPage = () => {
           <p className="text-center text-gray-500">Or sign in with</p>
           <div className="flex justify-center space-x-4 mt-4">
             <button
-              onClick={handleGoogleLogin}
+              onClick={() => handleSocialLogin("google")}
               className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md font-semibold"
             >
               Google
             </button>
             <button
-              onClick={handleGithubLogin}
+              onClick={() => handleSocialLogin("github")}
               className="bg-gray-800 hover:bg-gray-900 text-white py-2 px-4 rounded-md font-semibold"
             >
               GitHub
             </button>
             <button
-              onClick={handleFacebookLogin}
+              onClick={() => handleSocialLogin("facebook")}
               className="bg-blue-700 hover:bg-blue-800 text-white py-2 px-4 rounded-md font-semibold"
             >
               Facebook

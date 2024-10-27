@@ -10,7 +10,7 @@ const RegisterPage = () => {
   const [phone, setPhone] = useState(''); // New field for phone
   const [address, setAddress] = useState(''); // New field for address
   const [error, setError] = useState('');
-  const { signup, loginWithGoogle, loginWithGithub } = useAuth(); // useAuth hook for context
+  const { signup, login } = useAuth(); // useAuth hook for context
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
@@ -31,16 +31,52 @@ const RegisterPage = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      await loginWithGoogle();
-      navigate('/login');
+      // await loginWithGoogle();
+      // navigate('/login');
+      handleSocialLogin("google");
     } catch (error) {
       setError(error.message);
     }
   };
 
+  const handleSocialLogin = async (provider) => {
+    try {
+      const userCredential = await login(provider, null, null);
+      console.log("user credential from register = ", userCredential);
+      const { uid, email, displayName } = userCredential.user;
+
+      // Optional: Show a form to collect missing information
+      if (!name || !phone || !address) {
+        setName(displayName || ''); // Pre-fill name if available
+        setEmail(email);
+        // Continue here only when name, phone, and address are filled out
+      }
+
+      // Send user details to backend after social login
+      await registerUserInBackend(uid, email, name, phone, address);
+      navigate('/login');
+    } catch (error) {
+      console.error("Error during social login:", error);
+      setError(error.message);
+    }
+  };
+
+  const registerUserInBackend = async (userId, email, name, phone, address) => {
+    const response = await fetch('https://my-course-backend-green.vercel.app/user/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, email, name, phone, address }),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to register user on the backend');
+    }
+  };
+
   const handleGithubLogin = async () => {
     try {
-      await loginWithGithub();
+      //await loginWithGithub();
       navigate('/login');
     } catch (error) {
       setError(error.message);
@@ -48,7 +84,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center my-8">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-center mb-4">Register</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
