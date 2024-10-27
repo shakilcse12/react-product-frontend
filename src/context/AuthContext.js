@@ -7,9 +7,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import toast from 'react-hot-toast'; // Ensure toast is imported if you're using it
-import { ROUTES } from '../routes';
-import { MdOutlineNotificationsActive } from 'react-icons/md';
+import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 const BACKEND_URL = 'https://my-course-backend-green.vercel.app'; // Backend URL

@@ -13,6 +13,7 @@ const LoginPage = () => {
   const { login, setRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   const fetchUserDetailsAndNavigate = async (email) => {
     try {
@@ -22,7 +23,7 @@ const LoginPage = () => {
       console.log("User details fetched from backend:", data);
 
       // Slight delay to ensure role state update
-      setTimeout(() => navigateUser(data.role), 100); 
+      setTimeout(() => navigateUser(data.role), 100);
     } catch (error) {
       toast.error(error.message);
       setError(error.message);
@@ -30,29 +31,32 @@ const LoginPage = () => {
     }
   };
 
-const navigateUser = (role) => {
+  const navigateUser = (role) => {
     const lastVisitedPage = localStorage.getItem("lastLocation");
     localStorage.removeItem("lastLocation");
     console.log("last visited page  = ", lastVisitedPage);
     let nowGoto = role === "admin" ? ROUTES.ADMIN_DASHBOARD : ROUTES.HOME;
-    
+
     // Additional condition to handle role-based redirection
-    if (nowGoto === ROUTES.ADMIN_DASHBOARD && role !== "admin") nowGoto = ROUTES.HOME;
+    if (nowGoto === ROUTES.ADMIN_DASHBOARD && role !== "admin")
+      nowGoto = ROUTES.HOME;
 
     if (nowGoto === ROUTES.HOME && lastVisitedPage) nowGoto = lastVisitedPage;
-    
+
     navigate(nowGoto);
-};
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-
+    setLoading(true);
     try {
       await login(null, email, password);
       await fetchUserDetailsAndNavigate(email);
     } catch (error) {
-      setError(error.message);
+      setError(error.message || "Login failed. Please try again."); // Handle login errors
+    } finally {
+      setLoading(false); // Reset loading state regardless of outcome
     }
   };
 
@@ -78,6 +82,12 @@ const navigateUser = (role) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        {/* Left-to-Right Loading Bar */}
+        {loading && (
+          <div className="w-full h-1 bg-gray-200 rounded-t">
+            <div className="h-full bg-blue-500 rounded-t animate-progress"></div>
+          </div>
+        )}
         <h2 className="text-3xl font-bold text-center mb-4">Login</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
 
