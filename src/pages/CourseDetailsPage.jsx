@@ -65,6 +65,7 @@ const CourseDetailsPage = () => {
       });
 
       if (response.ok) {
+        setIsBought(true);
         Swal.fire({
           title: "Purchase Successful!",
           text: `You have successfully bought the course: ${course.name}`,

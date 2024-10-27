@@ -25,7 +25,7 @@ const LoginPage = () => {
       // Slight delay to ensure role state update
       setTimeout(() => navigateUser(data.role), 100);
     } catch (error) {
-      toast.error(error.message);
+      //toast.error(error.message);
       setError(error.message);
       console.error("Error fetching user details:", error);
     }

@@ -43,11 +43,11 @@ export const AuthProvider = ({ children }) => {
             updateUserDetails(data);
           } else {
             console.error(data.error);
-            toast.error('Failed to fetch user details');
+            //toast.error('Failed to fetch user details');
           }
         } catch (error) {
           console.error('Error fetching role from backend:', error);
-          toast.error('Error fetching user details');
+          //toast.error('Error fetching user details');
         }
       } else {
         console.log("No user detected");
