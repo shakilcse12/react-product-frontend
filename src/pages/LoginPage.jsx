@@ -1,49 +1,52 @@
 // src/pages/LoginPage.js
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext'; 
-import { useNavigate, useLocation } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { ROUTES } from '../routes';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
+import { ROUTES } from "../routes";
+import { fetchUserDetails } from "../services/UserService";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const { login, setRole } = useAuth(); 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login, setRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const fetchUserDetailsAndNavigate = async (email) => {
     try {
-      const response = await fetch('https://my-course-backend-green.vercel.app/user/details', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }), 
-      });
+      const data = await fetchUserDetails(email);
+      setRole(data.role); // Set role before navigation
+      toast.success("Login Successful");
+      console.log("User details fetched from backend:", data);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("Login Successful");
-        console.log("User details fetched from backend:", data);
-        setRole(data.role);
-
-        const lastVisitedPage = localStorage.getItem('lastLocation');
-        localStorage.removeItem('lastLocation');
-        navigate(lastVisitedPage || (data.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD));
-      } else {
-        toast.error(data.error);
-        setError(data.error);
-      }
+      // Slight delay to ensure role state update
+      setTimeout(() => navigateUser(data.role), 100); 
     } catch (error) {
+      toast.error(error.message);
+      setError(error.message);
       console.error("Error fetching user details:", error);
-      setError("Unable to fetch user details");
     }
   };
 
+const navigateUser = (role) => {
+    const lastVisitedPage = localStorage.getItem("lastLocation");
+    localStorage.removeItem("lastLocation");
+    console.log("last visited page  = ", lastVisitedPage);
+    let nowGoto = role === "admin" ? ROUTES.ADMIN_DASHBOARD : ROUTES.HOME;
+    
+    // Additional condition to handle role-based redirection
+    if (nowGoto === ROUTES.ADMIN_DASHBOARD && role !== "admin") nowGoto = ROUTES.HOME;
+
+    if (nowGoto === ROUTES.HOME && lastVisitedPage) nowGoto = lastVisitedPage;
+    
+    navigate(nowGoto);
+};
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     try {
       await login(null, email, password);
@@ -54,7 +57,7 @@ const LoginPage = () => {
   };
 
   const handleSocialLogin = async (provider) => {
-    setError('');
+    setError("");
 
     try {
       const user = await login(provider, null, null);
@@ -77,7 +80,7 @@ const LoginPage = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-center mb-4">Login</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        
+
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium">
@@ -138,7 +141,7 @@ const LoginPage = () => {
         </div>
 
         <p className="mt-6 text-center text-sm text-gray-500">
-          Don’t have an account?{' '}
+          Don’t have an account?{" "}
           <a href="/register" className="text-blue-500 hover:underline">
             Register
           </a>
