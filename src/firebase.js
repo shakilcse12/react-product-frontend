@@ -3,19 +3,17 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBMxlnu0RI4lQWHg2bi42SEIzDRT6uVs18",
-    authDomain: "react-product-frontend.firebaseapp.com",
-    projectId: "react-product-frontend",
-    storageBucket: "react-product-frontend.appspot.com",
-    messagingSenderId: "109690859458",
-    appId: "1:109690859458:web:c6c1dd4a2103c3464c705b"
+    apiKey: import.meta.env.VITE_APIKEY,
+    authDomain: import.meta.env.VITE_AUTHDOMAIN,
+    projectId: import.meta.env.VITE_PROJECTID,
+    storageBucket: import.meta.env.VITE_STORAGEBUCKET,
+    messagingSenderId: import.meta.env.VITE_MESSAGINGSENDERID,
+    appId: import.meta.env.VITE_APPID,
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
-googleProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
-googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
 const githubProvider = new GithubAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 
