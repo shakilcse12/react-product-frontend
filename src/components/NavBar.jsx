@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Adjust this path
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
@@ -7,9 +7,9 @@ import { ROUTES } from '../routes';
 import LogoutButton from './LogoutButton';
 import { useLocation } from 'react-router-dom';
 
-const NavBar = ({lastLocations}) => {
+const NavBar = ({ lastLocations }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth(); // Using user to check login status
+  const { user } = useAuth(); // Using user to check login status and access profile data
   console.log(user);
 
   const isDashboardPage = lastLocations === ROUTES.ADMIN_DASHBOARD || lastLocations === ROUTES.USER_DASHBOARD;
@@ -21,10 +21,9 @@ const NavBar = ({lastLocations}) => {
     <nav className="bg-white shadow-md">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          
           {/* Logo and Site Name */}
           <div className="flex items-center">
-            <NavLink to={ROUTES.HOME}> 
+            <NavLink to={ROUTES.HOME}>
               <img src={logo} alt="Logo" className="w-10 h-10" />
             </NavLink>
             <NavLink to={ROUTES.HOME} className="ml-2 text-2xl font-bold">
@@ -48,19 +47,34 @@ const NavBar = ({lastLocations}) => {
               }>
               Products
             </NavLink>
-            
-            {/* Conditionally render Dashboard link or Login/Register */}
-            {user ? (
-              <div>
-              <NavLink 
-                to={user.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD} // Redirect to Dashboard when logged in
-                className="text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600"
-              >
-                Dashboard
-              </NavLink>
-              {!isDashboardPage && <LogoutButton />}
-             </div>
 
+            {/* Conditionally render Dashboard, Profile, and Logout when user is logged in */}
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <NavLink 
+                  to={user.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD}
+                  className={({ isActive }) => 
+                    isActive && user ? "text-blue-500 font-semibold" : "text-gray-700 hover:text-blue-500"
+                  }
+                >
+                  Dashboard
+                </NavLink>
+
+                {/* User Profile Picture and Name */}
+                <div className="flex items-center space-x-2">
+                  {user.profilePicture && (
+                    <img
+                      src={user.profilePicture}
+                      alt="User Profile"
+                      className="w-8 h-8 rounded-full border-2 border-blue-500"
+                    />
+                  )}
+                  <span className="text-gray-700 font-medium">{user.userName}</span>
+                </div>
+
+                {/* Logout Button */}
+                {!isDashboardPage && <LogoutButton />}
+              </div>
             ) : (
               <div className="flex space-x-4">
                 <NavLink
@@ -115,19 +129,32 @@ const NavBar = ({lastLocations}) => {
               Products
             </NavLink>
 
-            {/* Conditionally render Dashboard link or Login/Register */}
+            {/* Conditionally render Dashboard, Profile, and Logout when user is logged in */}
             {user ? (
-              <div>
-              <NavLink
-                to={user.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD}
-                className="text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600"
-                onClick={toggleMenu}
-              >
-                Dashboard
-              </NavLink>
-              {!isDashboardPage && <LogoutButton />}
-            </div>
-              
+              <div className="flex flex-col items-center space-y-4">
+                <NavLink
+                  to={user.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD}
+                  className="text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600"
+                  onClick={toggleMenu}
+                >
+                  Dashboard
+                </NavLink>
+
+                {/* User Profile Picture and Name */}
+                <div className="flex flex-col items-center space-y-2">
+                  {user.profilePicture && (
+                    <img
+                      src={user.profilePicture}
+                      alt="User Profile"
+                      className="w-8 h-8 rounded-full border-2 border-blue-500"
+                    />
+                  )}
+                  <span className="text-gray-700 font-medium">{user.userName}</span>
+                </div>
+
+                {/* Logout Button */}
+                {!isDashboardPage && <LogoutButton />}
+              </div>
             ) : (
               <>
                 <NavLink
