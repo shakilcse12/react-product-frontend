@@ -33,18 +33,6 @@ const AdminDashboard = () => {
                 setCategories(categoriesData);
                 const productsData = await fetchProducts();
                 setProducts(productsData);
-                // const updatedProducts = productsData.map(product => {
-                //     // Find the corresponding category object for the product's category ID
-                //     const categoryObject = categoriesData.find(category => category._id === product.category);
-
-                //     // If a match is found, replace the category ID with the category object
-                //     return {
-                //         ...product,
-                //         category: categoryObject || product.category // Ensure category remains if no match
-                //     };
-                // });
-
-                // setProducts(updatedProducts);
                 fetchProductsWithCategories();
             } catch (error) {
                 console.error(error.message);
@@ -99,22 +87,6 @@ const AdminDashboard = () => {
         }
     };
 
-
-    // Functions to handle API calls for product actions
-    const handleAddProduct2 = async () => {
-        try {
-            const response = await addProduct(newProduct);
-            if (response.insertedId) {
-                const newProdWithId = { ...newProduct, _id: response.insertedId };
-                setProducts((prevProducts) => [...prevProducts, newProdWithId]);
-                setShowProductModal(false);
-                setNewProduct({ name: '', image: '', rating: '', price: '', category: '' });
-            }
-        } catch (error) {
-            console.error("Failed to add product:", error.message);
-        }
-    };
-
     const handleAddProduct = async () => {
         try {
             const response = await addProduct(newProduct);
@@ -133,22 +105,6 @@ const AdminDashboard = () => {
             }
         } catch (error) {
             console.error("Failed to add product:", error.message);
-        }
-    };
-
-
-    const handleEditProduct2 = async (productId, updatedDetails) => {
-        // Destructure and remove `_id` from the object to prevent update on the `_id` field
-        const { _id, ...detailsToUpdate } = updatedDetails;
-
-        try {
-            const updatedProduct = await editProduct(productId, detailsToUpdate);
-            setProducts(prevProducts =>
-                prevProducts.map(product => (product._id === productId ? updatedProduct : product))
-            );
-            setEditProductDetails(null);
-        } catch (error) {
-            console.error("Failed to edit product:", error.message);
         }
     };
 

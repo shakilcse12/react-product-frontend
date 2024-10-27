@@ -4,12 +4,15 @@ import Swal from "sweetalert2";
 import { fetchCourseDetails } from "../services/ProductService";
 import { useAuth } from "../context/AuthContext";
 import { PRODUCT_API } from "../API/Product";
+import { getProductDetailsWithPurchaseStatus } from "../services/ProductService";
 
 const CourseDetailsPage = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const [course, setCourse] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBought, setIsBought] = useState(false);
+
   const [purchaseData, setPurchaseData] = useState({
     userName: user?.userName || '',
     email: user?.email || '',
@@ -22,8 +25,10 @@ const CourseDetailsPage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const fetchedCourseDetails = await fetchCourseDetails(id);
-        setCourse(fetchedCourseDetails);
+        console.log("suer id from details = ", user?.userId);
+        const resp = await getProductDetailsWithPurchaseStatus(id, user.userId);
+        setCourse(resp.product);
+        setIsBought(resp.isBought);
       } catch (error) {
         console.error(error.message);
       }
@@ -32,6 +37,7 @@ const CourseDetailsPage = () => {
   }, [id]);
 
   const handleBuyNow = () => {
+    if(isBought) { return; }
     console.log("user data from courseDetails page = ", user);
     setIsModalOpen(true); // Open the modal
   };
@@ -100,7 +106,7 @@ const CourseDetailsPage = () => {
           <div className="flex justify-center mb-4">
             <img
               src={course.image}
-              alt={course.author}
+              alt={course?.author}
               className="w-32 h-32 object-cover border-4 border-blue-500"
             />
           </div>
@@ -148,9 +154,10 @@ const CourseDetailsPage = () => {
             </button>
             <button
               onClick={handleBuyNow}
+              disabled={isBought}
               className="px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
             >
-              Buy Now
+              {isBought ? "You have bought this" : "Buy Now"}
             </button>
           </div>
         </div>

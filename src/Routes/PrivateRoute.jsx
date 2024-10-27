@@ -10,11 +10,12 @@ const PrivateRoute = ({children}) => {
 
     const location = useLocation();
 
-    if(loading) return <Loader></Loader>;
-
+    //if(loading) return <Loader></Loader>;
+    localStorage.setItem('lastLocation', location.pathname);
+    console.log("setting location = ", location.pathname);
     if(user) return children;
 
-    localStorage.setItem('lastLocation', location.pathname);
+    
 
     return <Navigate state={{ from: location}} to={ROUTES.LOGIN}></Navigate>
 }

@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Adjust this path
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 import logo from '../assets/logo.png';
 import { ROUTES } from '../routes';
 import LogoutButton from './LogoutButton';
+import { useLocation } from 'react-router-dom';
 
-const NavBar = () => {
+const NavBar = ({lastLocations}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout } = useAuth(); // Using user to check login status
+  const { user } = useAuth(); // Using user to check login status
   console.log(user);
+
+  const isDashboardPage = lastLocations === ROUTES.ADMIN_DASHBOARD || lastLocations === ROUTES.USER_DASHBOARD;
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -55,7 +58,7 @@ const NavBar = () => {
               >
                 Dashboard
               </NavLink>
-               <LogoutButton />
+              {!isDashboardPage && <LogoutButton />}
              </div>
 
             ) : (
@@ -122,12 +125,7 @@ const NavBar = () => {
               >
                 Dashboard
               </NavLink>
-              <button
-              onClick={logout}
-              className="text-white bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 ml-2"
-            >
-              Logout
-            </button>
+              {!isDashboardPage && <LogoutButton />}
             </div>
               
             ) : (
