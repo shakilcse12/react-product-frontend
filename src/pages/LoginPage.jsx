@@ -10,7 +10,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, setRole } = useAuth();
+  const { login, setRole, user, message, setMessage } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,6 @@ const LoginPage = () => {
     try {
       const data = await fetchUserDetails(email);
       setRole(data.role); // Set role before navigation
-      toast.success("Login Successful");
       console.log("User details fetched from backend:", data);
 
       // Slight delay to ensure role state update
@@ -32,6 +31,7 @@ const LoginPage = () => {
   };
 
   const navigateUser = (role) => {
+    console.log("user in navigate", user);
     const lastVisitedPage = localStorage.getItem("lastLocation");
     localStorage.removeItem("lastLocation");
     console.log("last visited page  = ", lastVisitedPage);
@@ -42,8 +42,8 @@ const LoginPage = () => {
       nowGoto = ROUTES.HOME;
 
     if (nowGoto === ROUTES.HOME && lastVisitedPage) nowGoto = lastVisitedPage;
-
-    navigate(nowGoto);
+    console.log("msg ", message);
+      navigate(nowGoto);
   };
 
   const handleLogin = async (e) => {
@@ -52,11 +52,18 @@ const LoginPage = () => {
     setLoading(true);
     try {
       await login(null, email, password);
-      await fetchUserDetailsAndNavigate(email);
+      console.log("user in login now msg... = ", message);
+      const loginSuccess = localStorage.getItem('isLoginSuccess');
+      
+      if(loginSuccess) {await fetchUserDetailsAndNavigate(email);}
+      else { toast.error("Firebase authentication failed."); }
+      //else {toast.error("Login failed. Please try again"); setLoading(false); }
     } catch (error) {
       setError(error.message || "Login failed. Please try again."); // Handle login errors
     } finally {
       setLoading(false); // Reset loading state regardless of outcome
+      setMessage(null);
+      localStorage.removeItem('isLoginSuccess');
     }
   };
 

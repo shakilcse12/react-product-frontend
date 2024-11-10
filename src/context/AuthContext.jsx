@@ -21,8 +21,10 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  let [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(null); // Add message state
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -30,21 +32,7 @@ export const AuthProvider = ({ children }) => {
       if (currentUser) {
         console.log("User is signed in:", currentUser);
         try {
-          const response = await fetch(`${BACKEND_URL}/user/details`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: currentUser.email }),
-          });
-
-          const data = await response.json();
-          if (response.ok) {
-            updateUserDetails(data);
-          } else {
-            console.error(data.error);
-            //toast.error('Failed to fetch user details');
-          }
+          getUserinfoBackend(currentUser?.email);
         } catch (error) {
           console.error('Error fetching role from backend:', error);
           //toast.error('Error fetching user details');
@@ -58,12 +46,37 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
+  const getUserinfoBackend = async (emails) => {
+    const response = await fetch(`${BACKEND_URL}/user/details`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: emails }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      updateUserDetails(data);
+    } else {
+      console.error(data.error);
+      //toast.error('Failed to fetch user details');
+    }
+  }
+
   const login = async (provider, email, password) => {
     setLoading(true);
     try {
       if (email && password) {
-        await signInWithEmailAndPassword(auth, email, password);
-        console.log('Logged in with Email and Password');
+         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+         setUser(userCredential.user);
+          setMessage("Login successful!"); // Set success message
+          localStorage.setItem("isLoginSuccess", true);
+          console.log("message = ", message);
+         //handleSignInResponse(resp?.user);
+         //return resp?.user;
+        //  if(resp?.user) getUserinfoBackend(email);
+        // console.log('Logged in with Email and Password from login ', user);
       } else {
         let selectedProvider;
         if (provider === 'google') {
@@ -78,7 +91,8 @@ export const AuthProvider = ({ children }) => {
           const result = await signInWithPopup(auth, selectedProvider);
           const user = result.user;
           console.log("Google login user:", user); // Log the entire user object
-          setUser(user); // Ensure the user state is updated
+          setUser(result.user); // Ensure the user state is updated
+          setMessage(`Logged in with ${provider} provider!`);
           console.log(`Logged in with ${provider} provider`);
         } else {
           console.error('No provider or email/password provided');
@@ -86,11 +100,30 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Login failed', error);
-      toast.error('Login failed');
+      setMessage("Login failed. Please try again.");
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleSignInResponse = (response) => {
+    const { uid, email, emailVerified, providerData, stsTokenManager } = response;
+
+    // Construct user object
+    const user = {
+        uid,
+        email,
+        emailVerified,
+        providerId: providerData[0]?.providerId,
+        accessToken: stsTokenManager.accessToken,
+        refreshToken: stsTokenManager.refreshToken,
+        photoURL: providerData[0]?.photoURL || null,
+    };
+
+    // Assuming setUser is a function from your context
+    setUser(user);
+};
 
   const updateUserDetails = (details) => {
     setUser(prev => ({
@@ -166,6 +199,8 @@ export const AuthProvider = ({ children }) => {
     updateUserDetails,
     logout,
     loading,
+    message, // Provide message in context
+    setMessage, // Allow message reset
   };
 
   return (

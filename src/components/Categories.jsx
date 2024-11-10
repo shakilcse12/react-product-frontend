@@ -27,7 +27,7 @@ const Categories = () => {
   };
 
   return (
-    <div className="relative py-12 px-4 sm:px-8 bg-gray-100">
+    <div className="relative py-12 px-4 sm:px-8">
       <h2 className="text-4xl font-bold mb-8 text-center text-gray-800">
         Product Categories
       </h2>
